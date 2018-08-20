@@ -15,7 +15,7 @@ mongoose
 
 app.get('/', (req, res) => res.send('hello'));
 
-//api routes
+//
 require('./routes')(app);
 
 const port = process.env.PORT || 5000;
