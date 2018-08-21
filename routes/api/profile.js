@@ -9,6 +9,7 @@ const Profile = require('../../models/Profile');
 const User = require('../../models/Users');
 //Load Profile Validator
 const validateProfileInput = require('../../validation/profile');
+const validateExperienceInput = require('../../validation/experience');
 
 /**
  * @route GET api/profile/test
@@ -157,6 +158,41 @@ router.post('/', passport.authenticate('jwt', { session: false }), ({body, user}
             }
         })
 
+});
+
+/**
+ * @route Post api/profile/experience
+ * @desc Add experience to profile
+ * @access Private
+ */
+router.post('/experience',
+    passport.authenticate('jwt', { session: false }),
+    ({user, body}, res) => {
+    const {errors, isValid} = validateExperienceInput(body);
+
+    //Check Validation
+    if (!isValid) {
+        //Return errors
+        return res.status(400).json(errors);
+    }
+
+    Profile.findOne({ user: user.id })
+        .then(profile => {
+            const newExp = {
+                title: body.title,
+                company: body.company,
+                location: body.location,
+                from: body.from,
+                to: body.to,
+                current: body.current,
+                description: body.description
+            };
+
+            // Add to exp array
+            profile.experience.unshift(newExp);
+
+            profile.save().then(profile => res.json(profile));
+        })
 });
 
 module.exports = router;
