@@ -7,6 +7,8 @@ const passport = require('passport');
 const Profile = require('../../models/Profile');
 //Load User Model
 const User = require('../../models/Users');
+//Load Profile Validator
+const validateProfileInput = require('../../validation/profile');
 
 /**
  * @route GET api/profile/test
@@ -17,12 +19,13 @@ router.get('/test', (req, res) => res.json({a: 'test profile'}));
 
 /**
  * @route GET api/profile
- * @desc Get current user profile
- * @access Private|Public
+ * @desc Get current user's profile
+ * @access Private
  */
 router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
     const errors = {};
     Profile.findOne({ user: req.user.id })
+        .populate('user', ['name', 'avatar'])
         .then(profile => {
 
             if (!profile) {
@@ -39,8 +42,15 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
  * @desc Create or Edit user profile
  * @access Private
  */
-router.get('/', passport.authenticate('jwt', { session: false }), ({body, user}, res) => {
-    const errors = {};
+router.post('/', passport.authenticate('jwt', { session: false }), ({body, user}, res) => {
+    const {errors, isValid} = validateProfileInput(body);
+
+    //Check Validation
+    if (!isValid) {
+        //Return errors
+        return res.status(400).json(errors);
+    }
+
     // Get fields
     const profileFields = {};
     profileFields.user = user.id;
