@@ -139,4 +139,63 @@ router.post('/unlike/:id',
             .catch(err => res.status(404).json({ postnotfound: 'no post found'}))
     });
 
+/**
+ * @route Post api/posts/comment/:postId
+ * @desc Add comment to post
+ * @access Private
+ */
+router.post('/comment/:id',
+    passport.authenticate('jwt', { session: false }),
+    ({params, user, body}, res) => {
+    const {errors, isValid} = validatePostInput(body);
+
+    //Check Validation
+    if (!isValid) {
+        //Return errors
+        return res.status(400).json(errors);
+    }
+
+    Post.findById(params.id)
+        .then(post => {
+            const newComment = {
+                text: body.text,
+                name: body.name,
+                avatar: body.avatar,
+                user: user.id
+            };
+
+            // Add to comments array
+            post.comments.unshift(newComment);
+
+            post.save().then(post => res.json(post))
+        })
+        .catch(err => res.status(404).json({ postnotfound: 'No post found'}))
+});
+
+/**
+ * @route Delete api/posts/comment/:postId/:commentId
+ * @desc Remove comment from post
+ * @access Private
+ */
+router.delete('/comment/:postId/:commentId',
+    passport.authenticate('jwt', { session: false }),
+    ({params, user, body}, res) => {
+
+        Post.findById(params.postId)
+            .then(post => {
+
+                // Add to comments array
+                const removeIndex = post.comments.findIndex(comment => comment.id.toString() === params.commentId);
+                if (removeIndex < 0) {
+                    res.status(404).json({ commentnotfound: 'Comment does not exists'});
+                    return;
+                }
+
+                // Splice out of array
+                post.comments.splice(removeIndex, 1);
+                post.save().then(post => res.json(post))
+            })
+            .catch(err => res.status(404).json({ postnotfound: 'No post found'}))
+    });
+
 module.exports = router;
