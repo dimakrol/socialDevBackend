@@ -31,9 +31,6 @@ class Register extends Component {
         let {errors, ...newUser} = this.state;
 
         this.props.registerUser(newUser, this.props.history);
-        // axios.post('/api/users/register', newUser)
-        //     .then(response => console.log(response.data))
-        //     .catch(err => this.setState({errors: err.response.data}))
     };
 
     render() {
@@ -109,7 +106,7 @@ class Register extends Component {
 Register.propTypes = {
     registerUser: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
-    // errors: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({

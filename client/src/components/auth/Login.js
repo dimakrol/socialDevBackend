@@ -15,7 +15,6 @@ class Login extends Component {
         ev.preventDefault();
         let {errors, ...user} = this.state;
         console.log(user);
-
     };
 
     render() {
