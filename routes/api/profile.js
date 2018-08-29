@@ -112,28 +112,28 @@ router.post('/', passport.authenticate('jwt', { session: false }), ({body, user}
     }
 
     // Get fields
-    const profileFields = {};
+    const {youtube, twitter, facebook, linkedin, instagram, skills, ...profileFields} = body;
     profileFields.user = user.id;
-    if(body.handle) profileFields.handle = body.handle;
-    if(body.company) profileFields.company = body.company;
-    if(body.website) profileFields.website = body.website;
-    if(body.location) profileFields.location = body.location;
-    if(body.bio) profileFields.bio = body.bio;
-    if(body.status) profileFields.status = body.status;
-    if(body.githubusername) profileFields.githubusername = body.githubusername;
+
+    // if(body.handle) profileFields.handle = body.handle;
+    // if(body.company) profileFields.company = body.company;
+    // if(body.website) profileFields.website = body.website;
+    // if(body.location) profileFields.location = body.location;
+    // if(body.bio) profileFields.bio = body.bio;
+    // if(body.status) profileFields.status = body.status;
+    // if(body.githubusername) profileFields.githubusername = body.githubusername;
     //skills - split into array
-    if(typeof body.skills !== 'undefined') {
-        profileFields.skills = body.skills.split(',');
+    if(typeof skills !== 'undefined') {
+        profileFields.skills = skills.split(',');
     }
 
     // Social
-    profileFields.social = {};
-    if(body.youtube) profileFields.social.youtube = body.youtube;
-    if(body.twitter) profileFields.social.twitter = body.twitter;
-    if(body.facebook) profileFields.social.facebook = body.facebook;
-    if(body.linkedin) profileFields.social.linkedin = body.linkedin;
-    if(body.instagram) profileFields.social.instagram = body.instagram;
-
+    profileFields.social = {youtube, twitter, facebook, linkedin, instagram};
+    // if(body.youtube) profileFields.social.youtube = body.youtube;
+    // if(body.twitter) profileFields.social.twitter = body.twitter;
+    // if(body.facebook) profileFields.social.facebook = body.facebook;
+    // if(body.linkedin) profileFields.social.linkedin = body.linkedin;
+    // if(body.instagram) profileFields.social.instagram = body.instagram;
     Profile.findOne({ user: user.id})
         .then(profile => {
             if(profile) {
