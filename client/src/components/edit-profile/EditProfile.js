@@ -95,22 +95,7 @@ class CreateProfile extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-
-        const profileData = {
-            handle: this.state.handle,
-            company: this.state.company,
-            website: this.state.website,
-            location: this.state.location,
-            status: this.state.status,
-            skills: this.state.skills,
-            githubusername: this.state.githubusername,
-            bio: this.state.bio,
-            twitter: this.state.twitter,
-            facebook: this.state.facebook,
-            linkedin: this.state.linkedin,
-            youtube: this.state.youtube,
-            instagram: this.state.instagram
-        };
+        const {errors, displaySocialInputs, ...profileData} = this.state;
 
         this.props.createProfile(profileData, this.props.history);
     }
